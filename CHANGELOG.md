@@ -1,4 +1,8 @@
 
+## Version 0.10 (WIP)
+
+
+
 ## Version 0.9
 
 * Removed the grumpyrest-jetty-launcher subproject. This project contained only two helper classes that at best helped

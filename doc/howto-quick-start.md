@@ -8,16 +8,16 @@
     <dependency>
         <groupId>io.github.grumpystuff</groupId>
         <artifactId>grumpyrest</artifactId>
-        <version>0.9</version>
+        <version>0.10</version>
     </dependency>
     ```
 * Gradle (long):
     ```
-    implementation group: 'io.github.grumpystuff', name: 'grumpyrest', version: '0.9'
+    implementation group: 'io.github.grumpystuff', name: 'grumpyrest', version: '0.10'
     ```
 * Gradle (short):
     ```
-    implementation 'io.github.grumpystuff:grumpyrest:0.9'
+    implementation 'io.github.grumpystuff:grumpyrest:0.10'
     ```
 
 ## Using the Jetty Launcher from the Demo
