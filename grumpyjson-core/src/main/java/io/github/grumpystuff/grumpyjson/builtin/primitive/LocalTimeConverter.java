@@ -4,33 +4,33 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-package io.github.grumpystuff.grumpyjson.builtin;
+package io.github.grumpystuff.grumpyjson.builtin.primitive;
 
 import io.github.grumpystuff.grumpyjson.JsonRegistries;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializer;
 import io.github.grumpystuff.grumpyjson.json_model.JsonElement;
-import io.github.grumpystuff.grumpyjson.json_model.JsonNumber;
+import io.github.grumpystuff.grumpyjson.json_model.JsonString;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializer;
 
 import java.lang.reflect.Type;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 /**
- * A converter for the primitive type long and its boxed type, {@link Long}.
- * <p>
- * This maps to and from integral JSON numbers in the 64-bit signed integer range.
+ * A converter for {@link LocalTime}.
  * <p>
  * This converter is registered by default, and only needs to be manually registered if it gets removed, such as by
  * calling {@link JsonRegistries#clear()}.
  */
-public final class LongConverter implements JsonSerializer<Long>, JsonDeserializer {
+public final class LocalTimeConverter implements JsonSerializer<LocalTime>, JsonDeserializer {
 
     /**
      * Constructor
      */
-    public LongConverter() {
+    public LocalTimeConverter() {
         // needed to silence Javadoc error because the implicit constructor doesn't have a doc comment
     }
 
@@ -38,29 +38,34 @@ public final class LongConverter implements JsonSerializer<Long>, JsonDeserializ
     public boolean supportsTypeForDeserialization(Type type) {
         Objects.requireNonNull(type, "type");
 
-        return type.equals(Long.TYPE) || type.equals(Long.class);
+        return type.equals(LocalTime.class);
     }
 
     @Override
-    public Long deserialize(JsonElement json, Type type) throws JsonDeserializationException {
+    public LocalTime deserialize(JsonElement json, Type type) throws JsonDeserializationException {
         Objects.requireNonNull(json, "json");
         Objects.requireNonNull(type, "type");
 
-        return IntegralNumberDeserializationUtil.deserialize(json.deserializerExpectsNumber());
+        String text = json.deserializerExpectsString();
+        try {
+            return LocalTime.parse(text);
+        } catch (DateTimeParseException e) {
+            throw new JsonDeserializationException(e.getMessage());
+        }
     }
 
     @Override
     public boolean supportsClassForSerialization(Class<?> clazz) {
         Objects.requireNonNull(clazz, "clazz");
 
-        return clazz.equals(Long.TYPE) || clazz.equals(Long.class);
+        return clazz.equals(LocalTime.class);
     }
 
     @Override
-    public JsonElement serialize(Long value) throws JsonSerializationException {
+    public JsonElement serialize(LocalTime value) throws JsonSerializationException {
         Objects.requireNonNull(value, "value");
 
-        return JsonNumber.of(value);
+        return JsonString.of(value.toString());
     }
 
 }

@@ -7,7 +7,7 @@
 package io.github.grumpystuff.grumpyjson.deserialize;
 
 import io.github.grumpystuff.grumpyjson.JsonEngine;
-import io.github.grumpystuff.grumpyjson.builtin.EnumConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.EnumConverter;
 import io.github.grumpystuff.grumpyjson.builtin.record.RecordConverterFactory;
 import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
 import io.github.grumpystuff.grumpyjson.registry.Registry;

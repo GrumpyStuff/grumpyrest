@@ -6,9 +6,9 @@
  */
 package io.github.grumpystuff.grumpyjson;
 
-import io.github.grumpystuff.grumpyjson.builtin.IntegerConverter;
-import io.github.grumpystuff.grumpyjson.builtin.ListConverter;
-import io.github.grumpystuff.grumpyjson.builtin.StringConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
+import io.github.grumpystuff.grumpyjson.builtin.collection.ListConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializer;
 import io.github.grumpystuff.grumpyjson.json_model.JsonArray;
 import io.github.grumpystuff.grumpyjson.json_model.JsonNumber;

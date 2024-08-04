@@ -8,6 +8,9 @@ package io.github.grumpystuff.grumpyjson.builtin;
 
 import io.github.grumpystuff.grumpyjson.JsonRegistries;
 import io.github.grumpystuff.grumpyjson.TypeToken;
+import io.github.grumpystuff.grumpyjson.builtin.collection.ListConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
 import org.junit.jupiter.api.Test;
 
 import java.io.OutputStream;

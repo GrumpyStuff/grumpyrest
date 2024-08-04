@@ -6,8 +6,8 @@
  */
 package io.github.grumpystuff.grumpyjson;
 
-import io.github.grumpystuff.grumpyjson.builtin.IntegerConverter;
-import io.github.grumpystuff.grumpyjson.builtin.StringConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalField;
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalFieldConverter;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializer;

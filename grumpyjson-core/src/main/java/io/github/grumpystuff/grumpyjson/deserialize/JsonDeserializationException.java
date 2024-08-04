@@ -7,7 +7,7 @@
 package io.github.grumpystuff.grumpyjson.deserialize;
 
 import io.github.grumpystuff.grumpyjson.FieldErrorNode;
-import io.github.grumpystuff.grumpyjson.builtin.ListConverter;
+import io.github.grumpystuff.grumpyjson.builtin.collection.ListConverter;
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.NullableFieldConverter;
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalFieldConverter;
 import io.github.grumpystuff.grumpyjson.builtin.record.RecordConverter;

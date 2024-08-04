@@ -8,9 +8,15 @@ package io.github.grumpystuff.grumpyjson;
 
 
 import io.github.grumpystuff.grumpyjson.builtin.*;
+import io.github.grumpystuff.grumpyjson.builtin.collection.ListConverter;
+import io.github.grumpystuff.grumpyjson.builtin.collection.MapConverter;
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.FieldMustBeNullConverter;
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.NullableFieldConverter;
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalFieldConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.BooleanConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.LongConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializer;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializerRegistry;
