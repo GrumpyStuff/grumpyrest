@@ -11,12 +11,12 @@ import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializer;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializer;
+import io.github.grumpystuff.grumpyjson.util.CloseShieldOutputStream;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * This class is the main entry point into the JSON conversion system.
@@ -57,7 +57,12 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @param <T> the static target type
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract <T> T deserialize(String source, Class<T> clazz) throws JsonDeserializationException;
+    public <T> T deserialize(String source, Class<T> clazz) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(clazz, "clazz");
+
+        return deserialize(wrapSource(source), clazz);
+    }
 
     /**
      * deserializes JSON from a {@link String}.
@@ -68,7 +73,12 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @param <T> the static target type
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract <T> T deserialize(String source, TypeToken<T> typeToken) throws JsonDeserializationException;
+    public <T> T deserialize(String source, TypeToken<T> typeToken) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(typeToken, "typeToken");
+
+        return deserialize(wrapSource(source), typeToken);
+    }
 
     /**
      * deserializes JSON from a {@link String}.
@@ -78,7 +88,12 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @return the deserialized value
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract Object deserialize(String source, Type type) throws JsonDeserializationException;
+    public Object deserialize(String source, Type type) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(type, "type");
+
+        return deserialize(wrapSource(source), type);
+    }
 
     /**
      * deserializes JSON from an {@link InputStream}. As demanded by the MIME type application/json, the input must be
@@ -90,7 +105,12 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @param <T> the static target type
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract <T> T deserialize(InputStream source, Class<T> clazz) throws JsonDeserializationException;
+    public <T> T deserialize(InputStream source, Class<T> clazz) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(clazz, "clazz");
+
+        return deserialize(wrapSource(source), clazz);
+    }
 
     /**
      * deserializes JSON from an {@link InputStream}. As demanded by the MIME type application/json, the input must be
@@ -102,7 +122,13 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @param <T> the static target type
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract <T> T deserialize(InputStream source, TypeToken<T> typeToken) throws JsonDeserializationException;
+    public <T> T deserialize(InputStream source, TypeToken<T> typeToken) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(typeToken, "typeToken");
+
+        return deserialize(wrapSource(source), typeToken);
+    }
+
 
     /**
      * deserializes JSON from an {@link InputStream}. As demanded by the MIME type application/json, the input must be
@@ -113,7 +139,12 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @return the deserialized value
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract Object deserialize(InputStream source, Type type) throws JsonDeserializationException;
+    public Object deserialize(InputStream source, Type type) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(type, "type");
+
+        return deserialize(wrapSource(source), type);
+    }
 
     /**
      * deserializes JSON from an {@link Reader}.
@@ -124,7 +155,12 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @param <T> the static target type
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract <T> T deserialize(Reader source, Class<T> clazz) throws JsonDeserializationException;
+    public <T> T deserialize(Reader source, Class<T> clazz) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(clazz, "clazz");
+
+        return clazz.cast(deserialize(source, (Type) clazz));
+    }
 
     /**
      * deserializes JSON from an {@link Reader}.
@@ -135,7 +171,13 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @param <T> the static target type
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
-    public abstract <T> T deserialize(Reader source, TypeToken<T> typeToken) throws JsonDeserializationException;
+    public <T> T deserialize(Reader source, TypeToken<T> typeToken) throws JsonDeserializationException {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(typeToken, "typeToken");
+
+        //noinspection unchecked
+        return (T) deserialize(source, typeToken.getType());
+    }
 
     /**
      * deserializes JSON from an {@link Reader}.
@@ -146,6 +188,18 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @throws JsonDeserializationException if the JSON is malformed or does not match the target type
      */
     public abstract Object deserialize(Reader source, Type type) throws JsonDeserializationException;
+
+    private static Reader wrapSource(String source) {
+        Objects.requireNonNull(source, "source");
+
+        return new StringReader(source);
+    }
+
+    private static Reader wrapSource(InputStream source) {
+        Objects.requireNonNull(source, "source");
+
+        return new InputStreamReader(source, StandardCharsets.UTF_8);
+    }
 
     // -----------------------------------------------------------------------
     // stringify / writeTo
@@ -158,7 +212,13 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @return the JSON string
      * @throws JsonSerializationException if the value is in an inconsistent state or a state that cannot be turned into JSON
      */
-    public abstract String serializeToString(Object value) throws JsonSerializationException;
+    public String serializeToString(Object value) throws JsonSerializationException {
+        Objects.requireNonNull(value, "value");
+
+        StringWriter writer = new StringWriter();
+        writeTo(value, writer);
+        return writer.toString();
+    }
 
     /**
      * Turns a value into JSON that is written to an output stream. As demanded by the MIME type application/json,
@@ -168,7 +228,23 @@ public abstract class JsonEngine extends StructuralJsonEngine {
      * @param destination the stream to write to
      * @throws JsonSerializationException if the value is in an inconsistent state or a state that cannot be turned into JSON
      */
-    public abstract void writeTo(Object value, OutputStream destination) throws JsonSerializationException;
+    public void writeTo(Object value, OutputStream destination) throws JsonSerializationException {
+        Objects.requireNonNull(value, "value");
+        Objects.requireNonNull(destination, "destination");
+
+        // We need to flush the encoding logic of the OutputStreamWriter at the end, but not cloe the underlying
+        // OutputStream. Unfortunately, OutputStreamWriter.close() does more flushing than just flush(), so we HAVE
+        // to close the OSW. We solve this by using a CloseShieldOutputStream to prevent the close() from closing the
+        // underlying stream.
+        OutputStreamWriter writer = new OutputStreamWriter(new CloseShieldOutputStream(destination), StandardCharsets.UTF_8);
+        writeTo(value, writer);
+        try {
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            throw new JsonSerializationException(e);
+        }
+    }
 
     /**
      * Turns a value into JSON that is written to a writer.
