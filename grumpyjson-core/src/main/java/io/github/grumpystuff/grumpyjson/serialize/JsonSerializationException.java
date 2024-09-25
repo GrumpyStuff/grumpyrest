@@ -72,6 +72,9 @@ public class JsonSerializationException extends RuntimeException {
     public JsonSerializationException(FieldErrorNode fieldErrorNode) {
         super("exception during JSON serialization");
         this.fieldErrorNode = Objects.requireNonNull(fieldErrorNode, "fieldErrorNode");
+        if (fieldErrorNode instanceof FieldErrorNode.InternalException exceptionNode) {
+            initCause(exceptionNode.getException());
+        }
     }
 
     /**
