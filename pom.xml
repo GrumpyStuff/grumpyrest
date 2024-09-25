@@ -111,6 +111,7 @@
     <modules>
         <module>grumpyjson-core</module>
         <module>grumpyjson-gson</module>
+        <module>grumpyjson-jackson</module>
         <module>grumpyrest</module>
         <module>grumpyrest-demo</module>
     </modules>
