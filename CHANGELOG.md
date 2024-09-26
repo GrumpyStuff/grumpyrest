@@ -1,5 +1,5 @@
 
-## Version 0.10 (WIP)
+## Version 0.10
 
 * add support for Jackson instead of GSON
 * Bugfix in `MapConverter` (it just never worked and always threw an exception)
