@@ -63,10 +63,10 @@ public final class PathArgument {
      * @param clazz the class to convert to
      * @return the converted value
      * @param <T> the static type of the class
-     * @throws FromStringParserException if conversion fails because the path argument does not conform to the expected
+     * @throws PathArgumentParseException if conversion fails because the path argument does not conform to the expected
      * format according to the type to convert to
      */
-    public <T> T getValue(Class<T> clazz) throws FromStringParserException {
+    public <T> T getValue(Class<T> clazz) throws PathArgumentParseException {
         Objects.requireNonNull(clazz, "clazz");
 
         return clazz.cast(getValue((Type)clazz));
@@ -78,10 +78,10 @@ public final class PathArgument {
      * @param typeToken a type token for the type to convert to
      * @return the converted value
      * @param <T> the static type to convert to
-     * @throws FromStringParserException if conversion fails because the path argument does not conform to the expected
+     * @throws PathArgumentParseException if conversion fails because the path argument does not conform to the expected
      * format according to the type to convert to
      */
-    public <T> T getValue(TypeToken<T> typeToken) throws FromStringParserException {
+    public <T> T getValue(TypeToken<T> typeToken) throws PathArgumentParseException {
         Objects.requireNonNull(typeToken, "typeToken");
 
         //noinspection unchecked
@@ -93,13 +93,17 @@ public final class PathArgument {
      *
      * @param type the type to convert to
      * @return the converted value
-     * @throws FromStringParserException if conversion fails because the path argument does not conform to the expected
+     * @throws PathArgumentParseException if conversion fails because the path argument does not conform to the expected
      * format according to the type to convert to
      */
-    public Object getValue(Type type) throws FromStringParserException {
+    public Object getValue(Type type) throws PathArgumentParseException {
         Objects.requireNonNull(type, "type");
 
-        return parseFromStringService.parseFromString(text, type);
+        try {
+            return parseFromStringService.parseFromString(text, type);
+        } catch (FromStringParserException e) {
+            throw new PathArgumentParseException(name, text, e);
+        }
     }
 
 }

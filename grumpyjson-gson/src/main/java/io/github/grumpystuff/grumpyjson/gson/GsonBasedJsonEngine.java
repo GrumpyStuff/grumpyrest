@@ -39,71 +39,6 @@ public final class GsonBasedJsonEngine extends JsonEngine {
     // -----------------------------------------------------------------------
 
     @Override
-    public <T> T deserialize(String source, Class<T> clazz) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(clazz, "clazz");
-
-        return deserialize(wrapSource(source), clazz);
-    }
-
-    @Override
-    public <T> T deserialize(String source, TypeToken<T> typeToken) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(typeToken, "typeToken");
-
-        return deserialize(wrapSource(source), typeToken);
-    }
-
-    @Override
-    public Object deserialize(String source, Type type) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(type, "type");
-
-        return deserialize(wrapSource(source), type);
-    }
-
-    @Override
-    public <T> T deserialize(InputStream source, Class<T> clazz) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(clazz, "clazz");
-
-        return deserialize(wrapSource(source), clazz);
-    }
-
-    @Override
-    public <T> T deserialize(InputStream source, TypeToken<T> typeToken) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(typeToken, "typeToken");
-
-        return deserialize(wrapSource(source), typeToken);
-    }
-
-    @Override
-    public Object deserialize(InputStream source, Type type) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(type, "type");
-
-        return deserialize(wrapSource(source), type);
-    }
-
-    @Override
-    public <T> T deserialize(Reader source, Class<T> clazz) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(clazz, "clazz");
-
-        return clazz.cast(deserialize(source, (Type) clazz));
-    }
-
-    @Override
-    public <T> T deserialize(Reader source, TypeToken<T> typeToken) throws JsonDeserializationException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(typeToken, "typeToken");
-
-        //noinspection unchecked
-        return (T) deserialize(source, typeToken.getType());
-    }
-
-    @Override
     public Object deserialize(Reader source, Type type) throws JsonDeserializationException {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(type, "type");
@@ -143,46 +78,9 @@ public final class GsonBasedJsonEngine extends JsonEngine {
         return "syntax error in JSON";
     }
 
-    private static Reader wrapSource(String source) {
-        Objects.requireNonNull(source, "source");
-
-        return new StringReader(source);
-    }
-
-    private static Reader wrapSource(InputStream source) {
-        Objects.requireNonNull(source, "source");
-
-        return new InputStreamReader(source, StandardCharsets.UTF_8);
-    }
-
     // -----------------------------------------------------------------------
     // stringify / writeTo
     // -----------------------------------------------------------------------
-
-    @Override
-    public String serializeToString(Object value) throws JsonSerializationException {
-        Objects.requireNonNull(value, "value");
-
-        StringWriter writer = new StringWriter();
-        writeTo(value, writer);
-        return writer.toString();
-    }
-
-    @Override
-    public void writeTo(Object value, OutputStream destination) throws JsonSerializationException {
-        Objects.requireNonNull(value, "value");
-        Objects.requireNonNull(destination, "destination");
-
-        OutputStreamWriter writer = new OutputStreamWriter(destination, StandardCharsets.UTF_8);
-        writeTo(value, writer);
-        try {
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            // Ignore. This can happen if the network connection closes unexpectedly. There is no use in logging this,
-            // and we cannot tell the client about it either.
-        }
-    }
 
     @Override
     public void writeTo(Object value, Writer destination) throws JsonSerializationException {

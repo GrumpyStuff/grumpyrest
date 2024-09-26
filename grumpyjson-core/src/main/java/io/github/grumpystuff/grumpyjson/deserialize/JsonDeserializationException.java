@@ -67,6 +67,9 @@ public class JsonDeserializationException extends Exception {
     public JsonDeserializationException(FieldErrorNode fieldErrorNode) {
         super("exception during JSON deserialization");
         this.fieldErrorNode = Objects.requireNonNull(fieldErrorNode, "fieldErrorNode");
+        if (fieldErrorNode instanceof FieldErrorNode.InternalException exceptionNode) {
+            initCause(exceptionNode.getException());
+        }
     }
 
     /**

@@ -3,5 +3,6 @@
 /target
 /grumpyjson-core/target
 /grumpyjson-gson/target
+/grumpyjson-jackson/target
 /grumpyrest/target
 /grumpyrest-demo/target
