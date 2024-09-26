@@ -15,9 +15,7 @@ import io.github.grumpystuff.grumpyrest.request.HttpMethod;
 import io.github.grumpystuff.grumpyrest.request.path.Path;
 import io.github.grumpystuff.grumpyrest.request.querystring.QuerystringParser;
 import io.github.grumpystuff.grumpyrest.request.querystring.QuerystringParserRegistry;
-import io.github.grumpystuff.grumpyrest.request.stringparser.standard.IntegerFromStringParser;
-import io.github.grumpystuff.grumpyrest.request.stringparser.standard.LongFromStringParser;
-import io.github.grumpystuff.grumpyrest.request.stringparser.standard.StringFromStringParser;
+import io.github.grumpystuff.grumpyrest.request.stringparser.standard.*;
 import io.github.grumpystuff.grumpyrest.response.*;
 import io.github.grumpystuff.grumpyrest.response.standard.NullResponseFactory;
 import io.github.grumpystuff.grumpyrest.request.stringparser.FromStringParser;
@@ -84,6 +82,10 @@ public final class RestApi {
         registerFromStringParser(new StringFromStringParser());
         registerFromStringParser(new IntegerFromStringParser());
         registerFromStringParser(new LongFromStringParser());
+        registerFromStringParser(new LocalDateParser());
+        registerFromStringParser(new LocalTimeParser());
+        registerFromStringParser(new LocalDateTimeParser());
+        registerFromStringParser(new OptionalFieldParser(fromStringParserRegistry));
 
     }
 
