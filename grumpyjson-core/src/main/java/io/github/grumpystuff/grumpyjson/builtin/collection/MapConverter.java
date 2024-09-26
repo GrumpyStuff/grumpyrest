@@ -21,7 +21,6 @@ import io.github.grumpystuff.grumpyjson.util.TypeUtil;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,7 +61,7 @@ public final class MapConverter implements JsonSerializer<Map<?, ?>>, JsonDeseri
         Objects.requireNonNull(type, "type");
 
         Map<String, JsonElement> jsonProperties = json.deserializerExpectsObject();
-        Type[] keyAndValueTypes = TypeUtil.expectParameterizedType(type, List.class, 2);
+        Type[] keyAndValueTypes = TypeUtil.expectParameterizedType(type, Map.class, 2);
         Type keyType = keyAndValueTypes[0];
         Type valueType = keyAndValueTypes[1];
         JsonDeserializer keyDeserializer, valueDeserializer;
