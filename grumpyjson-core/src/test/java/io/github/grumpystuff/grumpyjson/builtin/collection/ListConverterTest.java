@@ -4,11 +4,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-package io.github.grumpystuff.grumpyjson.builtin;
+package io.github.grumpystuff.grumpyjson.builtin.collection;
 
 import io.github.grumpystuff.grumpyjson.JsonRegistries;
 import io.github.grumpystuff.grumpyjson.TypeToken;
-import io.github.grumpystuff.grumpyjson.builtin.collection.ListConverter;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
 import org.junit.jupiter.api.Test;
