@@ -1,11 +1,16 @@
 
 ## Version 0.10 (WIP)
 
+* add support for Jackson instead of GSON
 * Bugfix in `MapConverter` (it just never worked and always threw an exception)
-* 
+* `JsonEngine` no longer closes any reader/writer/streams passed to it. Doing so was never intended.
+* internal exceptions are now chained as cause to a de/serialization exception (but still not responded to the client
+  because we don't know if they contain sensitive information)
+* added some missing registrations for standard from-string parsers
+* parsing a path segment now throws `PathArgumentParseException` which responds its message with a 404 error to the
+  client because such errors are not expected to contain sensitive information
 * refactoring, including moving classes around to better organize packages
 * more unit tests
-
 
 ## Version 0.9
 
