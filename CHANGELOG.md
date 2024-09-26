@@ -1,6 +1,10 @@
 
 ## Version 0.10 (WIP)
 
+* Bugfix in `MapConverter` (it just never worked and always threw an exception)
+* 
+* refactoring, including moving classes around to better organize packages
+* more unit tests
 
 
 ## Version 0.9
