@@ -42,6 +42,15 @@ public class JacksonBasedJsonEngineTest {
     }
 
     @Test
+    public void testEmptyInput() {
+        var exception = Assertions.assertThrows(
+                JsonDeserializationException.class,
+                () -> engine.deserialize("", JsonElement.class)
+        );
+        Assertions.assertTrue(exception.getMessage().contains("no JSON to deserialize"));
+    }
+
+    @Test
     public void testSyntaxError() {
         var exception = Assertions.assertThrows(
                 JsonDeserializationException.class,

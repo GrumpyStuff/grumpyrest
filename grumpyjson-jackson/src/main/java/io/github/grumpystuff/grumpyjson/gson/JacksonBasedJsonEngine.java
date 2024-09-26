@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import io.github.grumpystuff.grumpyjson.FieldErrorNode;
 import io.github.grumpystuff.grumpyjson.JsonEngine;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
@@ -45,7 +46,7 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
 
         try {
             JsonNode jsonNode = readJson(source);
-            if (jsonNode == null) {
+            if (jsonNode == null || jsonNode.getNodeType() == JsonNodeType.MISSING) {
                 // this happens if the source does not even contain malformed JSON, but just nothing (EOF)
                 throw new JsonDeserializationException("no JSON to deserialize");
             }
