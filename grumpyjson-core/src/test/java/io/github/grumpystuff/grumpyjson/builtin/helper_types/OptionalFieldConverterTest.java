@@ -8,8 +8,8 @@ package io.github.grumpystuff.grumpyjson.builtin.helper_types;
 
 import io.github.grumpystuff.grumpyjson.JsonRegistries;
 import io.github.grumpystuff.grumpyjson.TypeToken;
-import io.github.grumpystuff.grumpyjson.builtin.IntegerConverter;
-import io.github.grumpystuff.grumpyjson.builtin.StringConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
+import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import io.github.grumpystuff.grumpyjson.json_model.JsonNull;
 import io.github.grumpystuff.grumpyjson.json_model.JsonNumber;
