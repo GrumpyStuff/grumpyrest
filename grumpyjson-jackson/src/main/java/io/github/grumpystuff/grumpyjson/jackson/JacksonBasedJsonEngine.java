@@ -17,6 +17,8 @@ import io.github.grumpystuff.grumpyjson.FieldErrorNode;
 import io.github.grumpystuff.grumpyjson.JsonEngine;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
+import io.github.grumpystuff.grumpyjson.util.CloseShieldReader;
+import io.github.grumpystuff.grumpyjson.util.CloseShieldWriter;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -43,6 +45,8 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
     public Object deserialize(Reader source, Type type) throws JsonDeserializationException {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(type, "type");
+
+        source = new CloseShieldReader(source);
 
         try {
             JsonNode jsonNode = readJson(source);
@@ -81,6 +85,8 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
     public void writeTo(Object value, Writer destination) throws JsonSerializationException {
         Objects.requireNonNull(value, "value");
         Objects.requireNonNull(destination, "destination");
+
+        destination = new CloseShieldWriter(destination);
 
         writeJson(JacksonTreeMapper.mapToJackson(toJsonElement(value)), destination);
     }
