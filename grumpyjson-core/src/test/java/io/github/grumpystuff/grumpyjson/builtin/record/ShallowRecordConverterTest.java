@@ -10,17 +10,24 @@ import io.github.grumpystuff.grumpyjson.ExceptionMessages;
 import io.github.grumpystuff.grumpyjson.FieldErrorNode;
 import io.github.grumpystuff.grumpyjson.JsonRegistries;
 import io.github.grumpystuff.grumpyjson.JsonTestUtil;
+import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalField;
+import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalFieldConverter;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
+import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializer;
 import io.github.grumpystuff.grumpyjson.json_model.JsonNumber;
 import io.github.grumpystuff.grumpyjson.json_model.JsonObject;
 import io.github.grumpystuff.grumpyjson.json_model.JsonString;
+import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
+import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static io.github.grumpystuff.grumpyjson.JsonTestUtil.assertFailsDeserialization;
+import static io.github.grumpystuff.grumpyjson.JsonTestUtil.assertFailsSerialization;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShallowRecordConverterTest {
 
@@ -100,6 +107,27 @@ public class ShallowRecordConverterTest {
     @Test
     public void testSerializationWithNull() {
         JsonTestUtil.assertFailsSerializationWithNpe(serializer, null);
+    }
+
+    @Test
+    public void testDeserializerReturnsNull() throws JsonDeserializationException, NotRegisteredException {
+        record CustomRecord(String s) {}
+        JsonRegistries customRegistries = JsonTestUtil.createRegistries(new JsonTestUtil.PossiblyNullReturningDeserializer());
+        customRegistries.seal();
+        var deserializer = customRegistries.getDeserializer(CustomRecord.class);
+        assertEquals(new CustomRecord("aaa"), deserializer.deserialize(JsonObject.of("s", JsonString.of("aaa")), CustomRecord.class));
+        assertFailsDeserialization(deserializer, JsonObject.of("s", JsonString.of("foo")), CustomRecord.class);
+        assertFailsDeserialization(deserializer, JsonObject.of(), CustomRecord.class);
+    }
+
+    @Test
+    public void testSerializerReturnsNull() throws JsonSerializationException, NotRegisteredException {
+        record CustomRecord(String s) {}
+        JsonRegistries customRegistries = JsonTestUtil.createRegistries(new JsonTestUtil.PossiblyNullReturningSerializer());
+        customRegistries.seal();
+        var serializer = customRegistries.getSerializer(CustomRecord.class);
+        assertEquals(JsonObject.of("s", JsonString.of("aaa")), serializer.serialize(new CustomRecord("aaa")));
+        assertFailsSerialization(serializer, new CustomRecord("foo"));
     }
 
 }
