@@ -15,6 +15,7 @@ import io.github.grumpystuff.grumpyjson.json_model.JsonElement;
 import io.github.grumpystuff.grumpyjson.json_model.JsonObject;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializer;
+import io.github.grumpystuff.grumpyjson.util.NullReturnCheckingCalls;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -126,9 +127,9 @@ public final class RecordConverter<T> implements JsonSerializer<T>, JsonDeserial
                 Type concreteFieldType = componentInfo.getConcreteType(recordType);
                 JsonDeserializer deserializer = providers.getDeserializer(concreteFieldType);
                 if (propertyJson == null) {
-                    fieldValues[i] = deserializer.deserializeAbsent(concreteFieldType);
+                    fieldValues[i] = NullReturnCheckingCalls.deserializeAbsent(deserializer, concreteFieldType);
                 } else {
-                    fieldValues[i] = deserializer.deserialize(propertyJson, concreteFieldType);
+                    fieldValues[i] = NullReturnCheckingCalls.deserialize(deserializer, propertyJson, concreteFieldType);
                 }
             } catch (JsonDeserializationException e) {
                 errorNode = e.getFieldErrorNode().in(name).and(errorNode);

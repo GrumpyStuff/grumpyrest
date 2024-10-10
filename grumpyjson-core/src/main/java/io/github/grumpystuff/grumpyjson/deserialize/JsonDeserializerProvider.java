@@ -2,6 +2,7 @@ package io.github.grumpystuff.grumpyjson.deserialize;
 
 import io.github.grumpystuff.grumpyjson.json_model.JsonElement;
 import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
+import io.github.grumpystuff.grumpyjson.util.NullReturnCheckingCalls;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -58,7 +59,7 @@ public interface JsonDeserializerProvider {
         } catch (NotRegisteredException e) {
             throw new JsonDeserializationException("no deserializer registered for type: " + type);
         }
-        return deserializer.deserialize(source, type);
+        return NullReturnCheckingCalls.deserialize(deserializer, source, type);
     }
 
     /**
@@ -79,7 +80,7 @@ public interface JsonDeserializerProvider {
         } catch (NotRegisteredException e) {
             throw new JsonDeserializationException("no deserializer registered for type: " + type);
         }
-        return deserializer.deserializeAbsent(type);
+        return NullReturnCheckingCalls.deserializeAbsent(deserializer, type);
     }
 
 }

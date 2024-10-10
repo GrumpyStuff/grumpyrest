@@ -16,6 +16,7 @@ import io.github.grumpystuff.grumpyjson.json_model.JsonElement;
 import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializer;
+import io.github.grumpystuff.grumpyjson.util.NullReturnCheckingCalls;
 import io.github.grumpystuff.grumpyjson.util.TypeUtil;
 
 import java.lang.reflect.Type;
@@ -69,7 +70,7 @@ public final class ListConverter implements JsonSerializer<List<?>>, JsonDeseria
         FieldErrorNode errorNode = null;
         for (int i = 0; i < jsonChildren.size(); i++) {
             try {
-                resultChildren.add(elementDeserializer.deserialize(jsonChildren.get(i), elementType));
+                resultChildren.add(NullReturnCheckingCalls.deserialize(elementDeserializer, jsonChildren.get(i), elementType));
             } catch (JsonDeserializationException e) {
                 errorNode = e.getFieldErrorNode().in(Integer.toString(i)).and(errorNode);
             } catch (Exception e) {

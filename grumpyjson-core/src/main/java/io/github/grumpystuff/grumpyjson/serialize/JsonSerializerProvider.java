@@ -2,6 +2,7 @@ package io.github.grumpystuff.grumpyjson.serialize;
 
 import io.github.grumpystuff.grumpyjson.json_model.JsonElement;
 import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
+import io.github.grumpystuff.grumpyjson.util.NullReturnCheckingCalls;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -59,7 +60,7 @@ public interface JsonSerializerProvider {
             throw new JsonSerializationException("no serializer for type: " + clazz);
         }
         //noinspection unchecked
-        return serializer.serialize(value);
+        return NullReturnCheckingCalls.serialize(serializer, value);
     }
 
     /**
@@ -82,7 +83,7 @@ public interface JsonSerializerProvider {
             throw new JsonSerializationException("no serializer for type: " + clazz);
         }
         //noinspection unchecked
-        return serializer.serializeOptional(value);
+        return NullReturnCheckingCalls.serializeOptional(serializer, value);
     }
 
 }
