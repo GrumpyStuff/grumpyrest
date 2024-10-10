@@ -7,9 +7,11 @@
 package io.github.grumpystuff.grumpyjson.builtin.collection;
 
 import io.github.grumpystuff.grumpyjson.JsonRegistries;
+import io.github.grumpystuff.grumpyjson.JsonTestUtil;
 import io.github.grumpystuff.grumpyjson.TypeToken;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
+import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import io.github.grumpystuff.grumpyjson.json_model.JsonNumber;
 import io.github.grumpystuff.grumpyjson.json_model.JsonObject;
 import io.github.grumpystuff.grumpyjson.json_model.JsonString;
@@ -117,6 +119,46 @@ public class MapConverterTest {
     @Test
     public void testSerializationWithNull() {
         assertFailsSerializationWithNpe(converter, null);
+    }
+
+    @Test
+    public void testKeyValueDeserializerReturnsNull() throws JsonDeserializationException {
+        JsonRegistries customRegistries = createRegistries(new JsonTestUtil.PossiblyNullReturningDeserializer());
+        MapConverter converter = new MapConverter(customRegistries);
+        customRegistries.seal();
+        {
+            var stringStringObject = JsonObject.of("xxx", JsonString.of("aaa"), "yyy", JsonString.of("bbb"));
+            var map = Map.of("xxx", "aaa", "yyy", "bbb");
+            assertEquals(map, converter.deserialize(stringStringObject, STRING_STRING_MAP_TYPE));
+        }
+        {
+            var stringStringObject = JsonObject.of("foo", JsonString.of("aaa"), "yyy", JsonString.of("bbb"));
+            assertFailsDeserialization(converter, stringStringObject, STRING_STRING_MAP_TYPE);
+        }
+        {
+            var stringStringObject = JsonObject.of("xxx", JsonString.of("foo"), "yyy", JsonString.of("bbb"));
+            assertFailsDeserialization(converter, stringStringObject, STRING_STRING_MAP_TYPE);
+        }
+    }
+
+    @Test
+    public void testKeyValueSerializerReturnsNull() {
+        JsonRegistries customRegistries = createRegistries(new JsonTestUtil.PossiblyNullReturningSerializer());
+        MapConverter converter = new MapConverter(customRegistries);
+        customRegistries.seal();
+        {
+            var stringStringObject = JsonObject.of("xxx", JsonString.of("aaa"), "yyy", JsonString.of("bbb"));
+            var map = Map.of("xxx", "aaa", "yyy", "bbb");
+            assertEquals(stringStringObject, converter.serialize(map));
+        }
+        {
+            var map = Map.of("xxx", "foo", "yyy", "bbb");
+            assertFailsSerialization(converter, map);
+        }
+        {
+            var map = Map.of("xxx", "aaa", "foo", "bbb");
+            assertFailsSerialization(converter, map);
+        }
     }
 
 }
