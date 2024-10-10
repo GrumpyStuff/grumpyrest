@@ -95,7 +95,22 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
     // back-ends
     // -----------------------------------------------------------------------
 
+    /**
+     * Reads JSON syntax from the specified source.
+     *
+     * @param source the source to read from
+     * @return the JSON tree
+     * @throws JsonDeserializationException on errors
+     */
     protected abstract JsonNode readJson(Reader source) throws JsonDeserializationException;
+
+    /**
+     * Writes JSON syntax to the specified destination.
+     *
+     * @param json the JSON tree
+     * @param destination the destination to write to
+     * @throws JsonSerializationException on errors
+     */
     protected abstract void writeJson(JsonNode json, Writer destination) throws JsonSerializationException;
 
     /**
