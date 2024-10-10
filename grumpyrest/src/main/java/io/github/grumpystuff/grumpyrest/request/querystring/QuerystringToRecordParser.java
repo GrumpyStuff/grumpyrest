@@ -68,7 +68,7 @@ public final class QuerystringToRecordParser implements QuerystringParser {
                 Type concreteFieldType = componentInfo.getConcreteType(recordType);
                 FromStringParser parser = fromStringParserRegistry.get(concreteFieldType);
                 if (value == null) {
-                    fieldValues[i] = parser.parseFromAbsentString(concreteFieldType);
+                    fieldValues[i] = NullReturnCheckingCalls.parseFromAbsentString(parser, concreteFieldType);
                 } else {
                     fieldValues[i] = NullReturnCheckingCalls.parseFromString(parser, value, concreteFieldType);
                 }
