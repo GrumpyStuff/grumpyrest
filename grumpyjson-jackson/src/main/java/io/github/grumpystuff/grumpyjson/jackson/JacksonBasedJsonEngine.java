@@ -98,6 +98,12 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
     protected abstract JsonNode readJson(Reader source) throws JsonDeserializationException;
     protected abstract void writeJson(JsonNode json, Writer destination) throws JsonSerializationException;
 
+    /**
+     * Creates a new JSON engine that uses the specified Jackson {@link ObjectMapper} for JSON syntax processing.
+     *
+     * @param objectMapper used for reading and writing JSON syntax
+     * @return the JSON engine
+     */
     public static JacksonBasedJsonEngine fromObjectMapper(ObjectMapper objectMapper) {
         return new JacksonBasedJsonEngine() {
 
@@ -122,6 +128,14 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
         };
     }
 
+    /**
+     * Creates a new JSON engine that uses the specified Jackson {@link ObjectReader} and {@link ObjectWriter} for
+     * JSON syntax processing.
+     *
+     * @param objectReader used for reading JSON syntax
+     * @param objectWriter used for writing JSON syntax
+     * @return the JSON engine
+     */
     public static JacksonBasedJsonEngine fromObjectReaderAndWriter(ObjectReader objectReader, ObjectWriter objectWriter) {
         return new JacksonBasedJsonEngine() {
 
@@ -146,6 +160,13 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
         };
     }
 
+    /**
+     * Creates a new read-only JSON engine that uses the specified Jackson {@link ObjectReader} for JSON syntax
+     * processing.
+     *
+     * @param objectReader used for reading JSON syntax
+     * @return the read-only JSON engine
+     */
     public static JacksonBasedJsonEngine fromObjectReader(ObjectReader objectReader) {
         return new JacksonBasedJsonEngine() {
 
@@ -166,6 +187,13 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
         };
     }
 
+    /**
+     * Creates a new write-only JSON engine that uses the specified Jackson {@link ObjectWriter} for JSON syntax
+     * processing.
+     *
+     * @param objectWriter used for writing JSON syntax
+     * @return the write-only JSON engine
+     */
     public static JacksonBasedJsonEngine fromObjectWriter(ObjectWriter objectWriter) {
         return new JacksonBasedJsonEngine() {
 
