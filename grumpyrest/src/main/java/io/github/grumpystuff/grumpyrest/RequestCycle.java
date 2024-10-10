@@ -19,6 +19,7 @@ import io.github.grumpystuff.grumpyrest.response.FinishRequestException;
 import io.github.grumpystuff.grumpyrest.response.Response;
 import io.github.grumpystuff.grumpyrest.response.ResponseTransmitter;
 import io.github.grumpystuff.grumpyrest.servlet.RequestPathSourcingStrategy;
+import io.github.grumpystuff.grumpyrest.util.NullReturnCheckingCalls;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import io.github.grumpystuff.grumpyrest.response.standard.StandardErrorResponse;
@@ -243,7 +244,8 @@ public final class RequestCycle {
             Object result = null;
             QuerystringParsingException originalException = null;
             try {
-                result = api.getQuerystringParserRegistry().get(type).parse(querystringSingle, type);
+                var parser = api.getQuerystringParserRegistry().get(type);
+                result = NullReturnCheckingCalls.parse(parser, querystringSingle, type);
                 if (result == null) {
                     throw new QuerystringParsingException(Map.of("(root)", "querystring parser returned null"));
                 }

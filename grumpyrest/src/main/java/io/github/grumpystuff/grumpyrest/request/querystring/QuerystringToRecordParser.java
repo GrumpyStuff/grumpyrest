@@ -11,6 +11,7 @@ import io.github.grumpystuff.grumpyrest.ExceptionMessages;
 import io.github.grumpystuff.grumpyrest.request.stringparser.FromStringParser;
 import io.github.grumpystuff.grumpyrest.request.stringparser.FromStringParserException;
 import io.github.grumpystuff.grumpyrest.request.stringparser.FromStringParserRegistry;
+import io.github.grumpystuff.grumpyrest.util.NullReturnCheckingCalls;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -69,7 +70,7 @@ public final class QuerystringToRecordParser implements QuerystringParser {
                 if (value == null) {
                     fieldValues[i] = parser.parseFromAbsentString(concreteFieldType);
                 } else {
-                    fieldValues[i] = parser.parseFromString(value, concreteFieldType);
+                    fieldValues[i] = NullReturnCheckingCalls.parseFromString(parser, value, concreteFieldType);
                 }
             } catch (FromStringParserException e) {
                 fieldErrors.put(name, e.getMessage());

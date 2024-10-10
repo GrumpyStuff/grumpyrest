@@ -70,5 +70,4 @@ public class NullReturnCheckingCalls {
         return Objects.requireNonNull(serializer.serializeOptional(value), "serializer.serializeOptional() returned null");
     }
 
-
 }
