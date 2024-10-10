@@ -43,4 +43,16 @@ public class NullReturnCheckingCalls {
         return Objects.requireNonNull(fromStringParser.parseFromString(s, type), "from-string parser returned null");
     }
 
+    /**
+     * NOT PUBLIC API
+     *
+     * @param fromStringParser ...
+     * @param type ...
+     * @return ...
+     * @throws FromStringParserException ...
+     */
+    public static Object parseFromAbsentString(FromStringParser fromStringParser, Type type) throws FromStringParserException {
+        return Objects.requireNonNull(fromStringParser.parseFromAbsentString(type), "from-string parser returned null");
+    }
+
 }
