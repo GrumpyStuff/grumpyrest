@@ -24,7 +24,14 @@ public final class JsonNumber extends JsonElement {
     private final Number value;
 
     private JsonNumber(Number value) {
+        validate(value.doubleValue());
         this.value = value;
+    }
+
+    private static void validate(double value) {
+        if (Double.isInfinite(value) || Double.isNaN(value)) {
+            throw new IllegalArgumentException("JSON numbers must be finite and not NaN");
+        }
     }
 
     /**
