@@ -268,26 +268,6 @@ public final class RequestCycle {
             return result;
         }
 
-        public <T> T parseBody(Class<T> clazz) {
-            Objects.requireNonNull(clazz, "clazz");
-
-            try {
-                return api.getJsonEngine().deserialize(prepareParse(), clazz);
-            } catch (JsonDeserializationException e) {
-                throw new FinishRequestException(StandardErrorResponse.requestBodyValidationFailed(e));
-            }
-        }
-
-        public <T> T parseBody(TypeToken<T> typeToken) {
-            Objects.requireNonNull(typeToken, "typeToken");
-
-            try {
-                return api.getJsonEngine().deserialize(prepareParse(), typeToken);
-            } catch (JsonDeserializationException e) {
-                throw new FinishRequestException(StandardErrorResponse.requestBodyValidationFailed(e));
-            }
-        }
-
         public Object parseBody(Type type) {
             Objects.requireNonNull(type, "type");
 
@@ -313,20 +293,6 @@ public final class RequestCycle {
                 }
             }
             return preParsedBody;
-        }
-
-
-        public <T> T parseQuerystring(Class<T> clazz) throws QuerystringParsingException {
-            Objects.requireNonNull(clazz, "clazz");
-
-            return clazz.cast(parseQuerystring((Type) clazz));
-        }
-
-        public <T> T parseQuerystring(TypeToken<T> typeToken) throws QuerystringParsingException {
-            Objects.requireNonNull(typeToken, "typeToken");
-
-            //noinspection unchecked
-            return (T) parseQuerystring(typeToken.getType());
         }
 
     }
