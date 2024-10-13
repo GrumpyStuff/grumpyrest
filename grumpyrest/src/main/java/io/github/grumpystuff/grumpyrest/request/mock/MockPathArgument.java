@@ -18,6 +18,9 @@ public record MockPathArgument(String name, String value) {
 
     /**
      * Standard constructor -- see class comment for details.
+     *
+     * @param name the name or null
+     * @param value the value
      */
     public MockPathArgument {
         if (value == null) {
