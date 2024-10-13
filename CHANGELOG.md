@@ -1,7 +1,13 @@
 
 ## Version 0.11
 
-
+* fixed problems with Jackson support
+* fixed cases where readers/writers passed to `JsonEngine` were still closed
+* added null checks for values returned from interfaces that are expected to be implemented by application code
+* fail fast when infinity / NaN are encountered during serialization (those are not supported by JSON)
+* added REST request mocking support for per-endpoint testing
+* change junit dependency to test scope so it isn't leaked into production builds of applications using Grumpyrest
+  as a transitive dependency
 
 ## Version 0.10
 
