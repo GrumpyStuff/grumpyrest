@@ -35,9 +35,8 @@ import java.util.regex.Pattern;
  */
 public abstract class JacksonBasedJsonEngine extends JsonEngine {
 
-    // Duplicate field 'x' for `ObjectNode`: not allowed when `DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY` enabled
-    // at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 15]
     private static final Pattern DUPLICATE_FIELD_PATTERN = Pattern.compile("Duplicate field '([^']*)' for `ObjectNode`.*", Pattern.DOTALL);
+    private static final Pattern TRAILING_TOKEN_PATTERN = Pattern.compile("Trailing token .* found after value .*", Pattern.DOTALL);
 
 
     /**
@@ -78,16 +77,28 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
         if (exception.getFieldErrorNode() instanceof FieldErrorNode.InternalException internalExceptionNode) {
             Exception wrappedException = internalExceptionNode.getException();
             if (wrappedException instanceof JsonParseException jsonParseException) {
-                return mapDeserializationException("syntax error in JSON", jsonParseException);
+                return mapSyntaxError(jsonParseException);
             }
             if (wrappedException instanceof MismatchedInputException mismatchedInputException) {
-                Matcher matcher = DUPLICATE_FIELD_PATTERN.matcher(mismatchedInputException.getMessage());
-                if (matcher.matches()) {
-                    return mapDeserializationException("duplicate JSON field '" + matcher.group(1) + "'", mismatchedInputException);
+                {
+                    Matcher matcher = DUPLICATE_FIELD_PATTERN.matcher(mismatchedInputException.getMessage());
+                    if (matcher.matches()) {
+                        return mapDeserializationException("duplicate JSON field '" + matcher.group(1) + "'", mismatchedInputException);
+                    }
+                }
+                {
+                    Matcher matcher = TRAILING_TOKEN_PATTERN.matcher(mismatchedInputException.getMessage());
+                    if (matcher.matches()) {
+                        return mapSyntaxError(mismatchedInputException);
+                    }
                 }
             }
         }
         return exception;
+    }
+
+    private static JsonDeserializationException mapSyntaxError(JsonProcessingException exception) {
+        return mapDeserializationException("syntax error in JSON", exception);
     }
 
     private static JsonDeserializationException mapDeserializationException(
