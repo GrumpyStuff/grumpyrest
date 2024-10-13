@@ -8,10 +8,12 @@ package io.github.grumpystuff.grumpyjson.jackson;
 
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import io.github.grumpystuff.grumpyjson.FieldErrorNode;
 import io.github.grumpystuff.grumpyjson.JsonEngine;
@@ -25,11 +27,18 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * GSON-based implementation of {@link JsonEngine}.
  */
 public abstract class JacksonBasedJsonEngine extends JsonEngine {
+
+    // Duplicate field 'x' for `ObjectNode`: not allowed when `DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY` enabled
+    // at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 15]
+    private static final Pattern DUPLICATE_FIELD_PATTERN = Pattern.compile("Duplicate field '([^']*)' for `ObjectNode`.*", Pattern.DOTALL);
+
 
     /**
      * Creates a new JSON engine with standard converters registered.
@@ -69,13 +78,27 @@ public abstract class JacksonBasedJsonEngine extends JsonEngine {
         if (exception.getFieldErrorNode() instanceof FieldErrorNode.InternalException internalExceptionNode) {
             Exception wrappedException = internalExceptionNode.getException();
             if (wrappedException instanceof JsonParseException jsonParseException) {
-                var location = jsonParseException.getLocation();
-                var message = "syntax error in JSON at line " + location.getLineNr() + ", column " + location.getColumnNr();
-                return new JsonDeserializationException(message);
+                return mapDeserializationException("syntax error in JSON", jsonParseException);
+            }
+            if (wrappedException instanceof MismatchedInputException mismatchedInputException) {
+                Matcher matcher = DUPLICATE_FIELD_PATTERN.matcher(mismatchedInputException.getMessage());
+                if (matcher.matches()) {
+                    return mapDeserializationException("duplicate JSON field '" + matcher.group(1) + "'", mismatchedInputException);
+                }
             }
         }
         return exception;
     }
+
+    private static JsonDeserializationException mapDeserializationException(
+            String shortMessage,
+            JsonProcessingException exception
+    ) {
+        var location = exception.getLocation();
+        var longMessage = shortMessage + " at line " + location.getLineNr() + ", column " + location.getColumnNr();
+        return new JsonDeserializationException(longMessage);
+    }
+
 
     // -----------------------------------------------------------------------
     // stringify / writeTo
