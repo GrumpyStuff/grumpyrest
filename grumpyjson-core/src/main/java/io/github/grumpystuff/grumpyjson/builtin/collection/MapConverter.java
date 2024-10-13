@@ -17,6 +17,7 @@ import io.github.grumpystuff.grumpyjson.json_model.JsonString;
 import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializer;
+import io.github.grumpystuff.grumpyjson.util.NullReturnCheckingCalls;
 import io.github.grumpystuff.grumpyjson.util.TypeUtil;
 
 import java.lang.reflect.Type;
@@ -77,9 +78,9 @@ public final class MapConverter implements JsonSerializer<Map<?, ?>>, JsonDeseri
             String keyText = entry.getKey();
             boolean isAtKey = true;
             try {
-                Object key = keyDeserializer.deserialize(JsonString.of(keyText), keyType);
+                Object key = NullReturnCheckingCalls.deserialize(keyDeserializer, JsonString.of(keyText), keyType);
                 isAtKey = false;
-                Object value = valueDeserializer.deserialize(entry.getValue(), valueType);
+                Object value = NullReturnCheckingCalls.deserialize(valueDeserializer, entry.getValue(), valueType);
                 result.put(key, value);
             } catch (JsonDeserializationException e) {
                 errorNode = e.getFieldErrorNode().in(buildFromJsonFieldName(isAtKey, keyText)).and(errorNode);

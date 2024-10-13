@@ -7,9 +7,11 @@
 package io.github.grumpystuff.grumpyjson.builtin.collection;
 
 import io.github.grumpystuff.grumpyjson.JsonRegistries;
+import io.github.grumpystuff.grumpyjson.JsonTestUtil;
 import io.github.grumpystuff.grumpyjson.TypeToken;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.IntegerConverter;
 import io.github.grumpystuff.grumpyjson.builtin.primitive.StringConverter;
+import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import org.junit.jupiter.api.Test;
 
 import java.io.OutputStream;
@@ -88,6 +90,24 @@ public class ListConverterTest {
     @Test
     public void testSerializationWithNull() {
         assertFailsSerializationWithNpe(converter, null);
+    }
+
+    @Test
+    public void testElementDeserializerReturnsNull() throws JsonDeserializationException {
+        JsonRegistries customRegistries = createRegistries(new JsonTestUtil.PossiblyNullReturningDeserializer());
+        ListConverter converter = new ListConverter(customRegistries);
+        customRegistries.seal();
+        assertEquals(List.of("xxx", "bar"), converter.deserialize(buildStringArray("xxx", "bar"), STRING_LIST_TYPE));
+        assertFailsDeserialization(converter, buildStringArray("bar", "foo"), STRING_LIST_TYPE);
+    }
+
+    @Test
+    public void testElementSerializerReturnsNull() {
+        JsonRegistries customRegistries = createRegistries(new JsonTestUtil.PossiblyNullReturningSerializer());
+        ListConverter converter = new ListConverter(customRegistries);
+        customRegistries.seal();
+        assertEquals(buildStringArray("xxx", "bar"), converter.serialize(List.of("xxx", "bar")));
+        assertFailsSerialization(converter, List.of("bar", "foo"));
     }
 
 }

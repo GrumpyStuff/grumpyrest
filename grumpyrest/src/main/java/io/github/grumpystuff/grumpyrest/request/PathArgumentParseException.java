@@ -14,9 +14,23 @@ import io.github.grumpystuff.grumpyrest.response.standard.StandardErrorResponse;
  */
 public final class PathArgumentParseException extends Exception implements SelfResponseFactory {
 
+    /**
+     * the name of the path argument that could not be parsed
+     */
     private final String name;
+
+    /**
+     * the value of the path argument that could not be parsed
+     */
     private final String value;
 
+    /**
+     * Constructor
+     *
+     * @param name the name of the path argument that could not be parsed
+     * @param value the value of the path argument that could not be parsed
+     * @param cause the exception that caused the parsing to fail
+     */
     public PathArgumentParseException(String name, String value, FromStringParserException cause) {
         super(buildMessage(name), cause);
         this.name = name;
@@ -27,14 +41,29 @@ public final class PathArgumentParseException extends Exception implements SelfR
         return "invalid value for path argument '" + name + "'";
     }
 
+    /**
+     * Returns the name of the path argument that could not be parsed.
+     *
+     * @return the argument name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the value of the path argument that could not be parsed.
+     *
+     * @return the argument value
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Returns the exception that caused the parsing to fail.
+     *
+     * @return the cause of the exception
+     */
     public FromStringParserException getCause() {
         return (FromStringParserException) super.getCause();
     }

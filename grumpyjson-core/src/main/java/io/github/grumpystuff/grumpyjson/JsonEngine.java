@@ -198,6 +198,8 @@ public abstract class JsonEngine extends StructuralJsonEngine {
     private static Reader wrapSource(InputStream source) {
         Objects.requireNonNull(source, "source");
 
+        // Unlike writeTo(OutputStream) below, we don't have to close the reader, and deserialize(Reader) won't do that
+        // either, so no "CloseShieldInputStream" is needed.
         return new InputStreamReader(source, StandardCharsets.UTF_8);
     }
 
@@ -239,6 +241,7 @@ public abstract class JsonEngine extends StructuralJsonEngine {
         OutputStreamWriter writer = new OutputStreamWriter(new CloseShieldOutputStream(destination), StandardCharsets.UTF_8);
         writeTo(value, writer);
         try {
+            // note that writeTo(Writer) doesn't close the writer, so flushing here won't throw a closed-stream exception
             writer.flush();
             writer.close();
         } catch (IOException e) {

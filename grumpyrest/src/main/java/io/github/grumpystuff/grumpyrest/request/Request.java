@@ -12,6 +12,7 @@ import io.github.grumpystuff.grumpyrest.request.stringparser.FromStringParserReg
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This interface provides access to all properties of an HTTP request that are relevant for the REST API.
@@ -71,7 +72,11 @@ public interface Request {
      * @throws QuerystringParsingException  on parsing errors, such as wrongly formatted fields, unknown fields,
      * missing fields or duplicate fields
      */
-    <T> T parseQuerystring(Class<T> clazz) throws QuerystringParsingException;
+    default <T> T parseQuerystring(Class<T> clazz) throws QuerystringParsingException {
+        Objects.requireNonNull(clazz, "clazz");
+
+        return clazz.cast(parseQuerystring((Type) clazz));
+    }
 
     /**
      * Parses the whole querystring into an object. This object is usually a Java record with a one-to-one mapping
@@ -85,7 +90,12 @@ public interface Request {
      * @throws QuerystringParsingException on parsing errors, such as wrongly formatted fields, unknown fields,
      * missing fields or duplicate fields
      */
-    <T> T parseQuerystring(TypeToken<T> typeToken) throws QuerystringParsingException;
+    default <T> T parseQuerystring(TypeToken<T> typeToken) throws QuerystringParsingException {
+        Objects.requireNonNull(typeToken, "typeToken");
+
+        //noinspection unchecked
+        return (T) parseQuerystring(typeToken.getType());
+    }
 
     /**
      * Parses the whole querystring into an object. This object is usually a Java record with a one-to-one mapping
@@ -108,7 +118,11 @@ public interface Request {
      * @return the parsed object
      * @param <T> the static type of the class to parse as
      */
-    <T> T parseBody(Class<T> clazz);
+    default <T> T parseBody(Class<T> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
+
+        return clazz.cast(parseBody((Type) clazz));
+    }
 
     /**
      * Parses the request body using the JSON parsing mechanism defined by {@link JsonEngine} and the JSON-able types
@@ -118,7 +132,12 @@ public interface Request {
      * @return the parsed object
      * @param <T> the static type to parse as
      */
-    <T> T parseBody(TypeToken<T> typeToken);
+    default <T> T parseBody(TypeToken<T> typeToken) {
+        Objects.requireNonNull(typeToken, "typeToken");
+
+        //noinspection unchecked
+        return (T) parseBody(typeToken.getType());
+    }
 
     /**
      * Parses the request body using the JSON parsing mechanism defined by {@link JsonEngine} and the JSON-able types

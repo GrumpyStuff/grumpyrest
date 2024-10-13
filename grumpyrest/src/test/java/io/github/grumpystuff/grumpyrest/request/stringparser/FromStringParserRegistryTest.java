@@ -10,6 +10,8 @@ import io.github.grumpystuff.grumpyrest.request.stringparser.standard.IntegerFro
 import io.github.grumpystuff.grumpyrest.request.stringparser.standard.StringFromStringParser;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Type;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FromStringParserRegistryTest {
@@ -69,6 +71,27 @@ public class FromStringParserRegistryTest {
         assertThrows(FromStringParserException.class, () -> registry.parseFromString("5", String.class));
         assertThrows(FromStringParserException.class, () -> registry.parseFromString("+5", String.class));
         assertThrows(FromStringParserException.class, () -> registry.parseFromString("-5", String.class));
+    }
+
+    @Test
+    public void testParserReturnsNull() throws FromStringParserException {
+        FromStringParserRegistry registry = new FromStringParserRegistry();
+        registry.register(new FromStringParser() {
+
+            public boolean supportsType(Type type) {
+                return type == String.class;
+            }
+
+            public Object parseFromString(String s, Type type) {
+                return s.equals("foo") ? null : s;
+            }
+
+            // cannot test "parsing" absent strings in the registry alone
+
+        });
+        registry.seal();
+        assertThrows(NullPointerException.class, () -> registry.parseFromString("foo", String.class));
+        assertEquals("bar", registry.parseFromString("bar", String.class));
     }
 
 }

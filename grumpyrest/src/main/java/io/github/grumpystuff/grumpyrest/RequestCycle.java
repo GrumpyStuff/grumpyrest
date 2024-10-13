@@ -19,6 +19,7 @@ import io.github.grumpystuff.grumpyrest.response.FinishRequestException;
 import io.github.grumpystuff.grumpyrest.response.Response;
 import io.github.grumpystuff.grumpyrest.response.ResponseTransmitter;
 import io.github.grumpystuff.grumpyrest.servlet.RequestPathSourcingStrategy;
+import io.github.grumpystuff.grumpyrest.util.NullReturnCheckingCalls;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import io.github.grumpystuff.grumpyrest.response.standard.StandardErrorResponse;
@@ -243,7 +244,8 @@ public final class RequestCycle {
             Object result = null;
             QuerystringParsingException originalException = null;
             try {
-                result = api.getQuerystringParserRegistry().get(type).parse(querystringSingle, type);
+                var parser = api.getQuerystringParserRegistry().get(type);
+                result = NullReturnCheckingCalls.parse(parser, querystringSingle, type);
                 if (result == null) {
                     throw new QuerystringParsingException(Map.of("(root)", "querystring parser returned null"));
                 }
@@ -264,26 +266,6 @@ public final class RequestCycle {
                 throw originalException;
             }
             return result;
-        }
-
-        public <T> T parseBody(Class<T> clazz) {
-            Objects.requireNonNull(clazz, "clazz");
-
-            try {
-                return api.getJsonEngine().deserialize(prepareParse(), clazz);
-            } catch (JsonDeserializationException e) {
-                throw new FinishRequestException(StandardErrorResponse.requestBodyValidationFailed(e));
-            }
-        }
-
-        public <T> T parseBody(TypeToken<T> typeToken) {
-            Objects.requireNonNull(typeToken, "typeToken");
-
-            try {
-                return api.getJsonEngine().deserialize(prepareParse(), typeToken);
-            } catch (JsonDeserializationException e) {
-                throw new FinishRequestException(StandardErrorResponse.requestBodyValidationFailed(e));
-            }
         }
 
         public Object parseBody(Type type) {
@@ -311,20 +293,6 @@ public final class RequestCycle {
                 }
             }
             return preParsedBody;
-        }
-
-
-        public <T> T parseQuerystring(Class<T> clazz) throws QuerystringParsingException {
-            Objects.requireNonNull(clazz, "clazz");
-
-            return clazz.cast(parseQuerystring((Type) clazz));
-        }
-
-        public <T> T parseQuerystring(TypeToken<T> typeToken) throws QuerystringParsingException {
-            Objects.requireNonNull(typeToken, "typeToken");
-
-            //noinspection unchecked
-            return (T) parseQuerystring(typeToken.getType());
         }
 
     }

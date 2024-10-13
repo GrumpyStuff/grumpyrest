@@ -10,6 +10,7 @@ import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
 import io.github.grumpystuff.grumpyjson.registry.Registry;
 import io.github.grumpystuff.grumpyrest.RestApi;
 import io.github.grumpystuff.grumpyrest.request.stringparser.standard.EnumParser;
+import io.github.grumpystuff.grumpyrest.util.NullReturnCheckingCalls;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -64,7 +65,7 @@ public final class FromStringParserRegistry extends Registry<Type, FromStringPar
         } catch (NotRegisteredException e) {
             throw new FromStringParserException("no parser registered for type " + type);
         }
-        return parser.parseFromString(text, type);
+        return NullReturnCheckingCalls.parseFromString(parser, text, type);
     }
 
 }

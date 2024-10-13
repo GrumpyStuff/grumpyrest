@@ -6,17 +6,17 @@
  */
 package io.github.grumpystuff.grumpyjson.gson;
 
-
 import com.google.gson.*;
 import io.github.grumpystuff.grumpyjson.JsonEngine;
-import io.github.grumpystuff.grumpyjson.TypeToken;
 import io.github.grumpystuff.grumpyjson.deserialize.JsonDeserializationException;
 import io.github.grumpystuff.grumpyjson.json_model.JsonElement;
 import io.github.grumpystuff.grumpyjson.serialize.JsonSerializationException;
+import io.github.grumpystuff.grumpyjson.util.CloseShieldReader;
+import io.github.grumpystuff.grumpyjson.util.CloseShieldWriter;
 
-import java.io.*;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +42,8 @@ public final class GsonBasedJsonEngine extends JsonEngine {
     public Object deserialize(Reader source, Type type) throws JsonDeserializationException {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(type, "type");
+
+        source = new CloseShieldReader(source);
 
         JsonElement json;
         try {
@@ -86,6 +88,8 @@ public final class GsonBasedJsonEngine extends JsonEngine {
     public void writeTo(Object value, Writer destination) throws JsonSerializationException {
         Objects.requireNonNull(value, "value");
         Objects.requireNonNull(destination, "destination");
+
+        destination = new CloseShieldWriter(destination);
 
         JsonElement json = toJsonElement(value);
         com.google.gson.JsonElement gsonElement = GsonTreeMapper.mapToGson(json);

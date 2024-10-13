@@ -7,6 +7,8 @@
 package io.github.grumpystuff.grumpyrest.request.querystring;
 
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalField;
+import io.github.grumpystuff.grumpyjson.registry.NotRegisteredException;
+import io.github.grumpystuff.grumpyrest.request.stringparser.FromStringParser;
 import io.github.grumpystuff.grumpyrest.request.stringparser.FromStringParserRegistry;
 import io.github.grumpystuff.grumpyrest.request.stringparser.standard.IntegerFromStringParser;
 import io.github.grumpystuff.grumpyrest.request.stringparser.standard.OptionalFieldParser;
@@ -14,7 +16,11 @@ import io.github.grumpystuff.grumpyrest.request.stringparser.standard.StringFrom
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Type;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class QuerystringParserRegistryTest {
 
@@ -69,6 +75,44 @@ public class QuerystringParserRegistryTest {
         Assertions.assertThrows(
             QuerystringParsingException.class,
             () -> registry.get(Foo.class).parse(Map.of("x", "5", "y", "abc", "z", "zzz"), Foo.class)
+        );
+    }
+
+    @Test
+    public void testParserReturnsNull() throws QuerystringParsingException, NotRegisteredException {
+        FromStringParserRegistry customFromStringParserRegistry = new FromStringParserRegistry();
+        customFromStringParserRegistry.register(new FromStringParser() {
+
+            public boolean supportsType(Type type) {
+                return type == String.class;
+            }
+
+            public Object parseFromString(String s, Type type) {
+                return s.equals("foo") ? null : s;
+            }
+
+            @Override
+            public Object parseFromAbsentString(Type type) {
+                return null;
+            }
+
+        });
+        customFromStringParserRegistry.seal();
+        QuerystringParserRegistry querystringParserRegistry = new QuerystringParserRegistry(customFromStringParserRegistry);
+        querystringParserRegistry.seal();
+
+        record Parameters(String s) {}
+        assertEquals(
+                new Parameters("xxx"),
+                querystringParserRegistry.get(Parameters.class).parse(Map.of("s", "xxx"), Parameters.class)
+        );
+        assertThrows(
+                QuerystringParsingException.class,
+                () -> querystringParserRegistry.get(Parameters.class).parse(Map.of("s", "foo"), Parameters.class)
+        );
+        assertThrows(
+                QuerystringParsingException.class,
+                () -> querystringParserRegistry.get(Parameters.class).parse(Map.of(), Parameters.class)
         );
     }
 

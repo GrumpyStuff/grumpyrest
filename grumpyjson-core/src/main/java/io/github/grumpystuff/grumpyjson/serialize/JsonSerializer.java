@@ -8,6 +8,7 @@ package io.github.grumpystuff.grumpyjson.serialize;
 
 import io.github.grumpystuff.grumpyjson.builtin.helper_types.OptionalField;
 import io.github.grumpystuff.grumpyjson.json_model.JsonElement;
+import io.github.grumpystuff.grumpyjson.util.NullReturnCheckingCalls;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -82,7 +83,7 @@ public interface JsonSerializer<T> {
     default Optional<JsonElement> serializeOptional(T value) throws JsonSerializationException {
         Objects.requireNonNull(value, "value");
 
-        return Optional.of(serialize(value));
+        return Optional.of(NullReturnCheckingCalls.serialize(this, value));
     }
 
 }

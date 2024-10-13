@@ -1,4 +1,4 @@
-package io.github.grumpystuff.grumpyjson.gson;
+package io.github.grumpystuff.grumpyjson.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;

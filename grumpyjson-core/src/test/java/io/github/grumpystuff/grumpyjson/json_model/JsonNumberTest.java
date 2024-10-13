@@ -62,4 +62,16 @@ public class JsonNumberTest {
         }
     }
 
+    @Test
+    public void testNonNumericNumbers() {
+        assertThrows(IllegalArgumentException.class, () -> JsonNumber.of(Float.NaN));
+        assertThrows(IllegalArgumentException.class, () -> JsonNumber.of(Float.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> JsonNumber.of(Float.NEGATIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> JsonNumber.of(Double.NaN));
+        assertThrows(IllegalArgumentException.class, () -> JsonNumber.of(Double.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> JsonNumber.of(Double.NEGATIVE_INFINITY));
+    }
+
+    // note: negative zero is not something we have to test for because it is supported by JSON
+
 }

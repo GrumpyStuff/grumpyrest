@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Assertions;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class JsonTestUtil {
@@ -224,4 +225,43 @@ public class JsonTestUtil {
         return registries;
     }
 
+    public static class PossiblyNullReturningSerializer implements JsonSerializer<String> {
+
+        @Override
+        public boolean supportsClassForSerialization(Class<?> clazz) {
+            return clazz == String.class;
+        }
+
+        @Override
+        public JsonElement serialize(String value) throws JsonSerializationException {
+            return value.equals("foo") ? null : JsonString.of(value);
+        }
+
+        @Override
+        public Optional<JsonElement> serializeOptional(String value) throws JsonSerializationException {
+            //noinspection OptionalAssignedToNull -- that's the point of this test
+            return value.equals("foo") ? null : Optional.of(JsonString.of(value));
+        }
+
+    }
+
+    public static class PossiblyNullReturningDeserializer implements JsonDeserializer {
+
+        @Override
+        public boolean supportsTypeForDeserialization(Type type) {
+            return type == String.class;
+        }
+
+        @Override
+        public String deserialize(JsonElement json, Type type) throws JsonDeserializationException {
+            String s = json.deserializerExpectsString();
+            return s.equals("foo") ? null : s;
+        }
+
+        @Override
+        public Object deserializeAbsent(Type type) {
+            return null;
+        }
+
+    }
 }

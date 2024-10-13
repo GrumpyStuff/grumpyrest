@@ -1,4 +1,8 @@
 
+## Version 0.11
+
+
+
 ## Version 0.10
 
 * add support for Jackson instead of GSON
